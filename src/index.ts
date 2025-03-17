@@ -10,6 +10,7 @@ import * as http from "http";
 import * as cors from "cors";
 import * as bodyParser from "body-parser";
 import * as dotenv from "dotenv";
+import { createContext } from "./utils/auth";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -48,10 +49,10 @@ async function startServer() {
     cors<cors.CorsRequest>(),
     bodyParser.json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({
-        userDAO,
-        token: req.headers.authorization,
-      }),
+      context: async ({ req }) => {
+        const token = req.headers.authorization;
+        return createContext(userDAO, token);
+      },
     })
   );
 

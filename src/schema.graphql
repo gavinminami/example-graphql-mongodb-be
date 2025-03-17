@@ -1,40 +1,80 @@
+# Input type for user registration
 input RegisterInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
+  firstName: String! # User's first name
+  lastName: String! # User's last name
+  email: String! # User's email address (must be unique)
+  password: String! # User's password (will be hashed)
 }
 
+# Represents a user in the system
 type User {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  email: String!
+  id: ID! # Unique identifier for the user
+  firstName: String! # User's first name
+  lastName: String! # User's last name
+  email: String! # User's email address
+  mfaEnabled: Boolean! # Whether multi-factor authentication is enabled
 }
 
+# Available queries for fetching user data
 type Query {
-  user(id: ID!): User
+  user(id: ID!): User # Fetch a specific user by their ID
+  me: User # Get the currently authenticated user
 }
 
+# Response type for successful login
 type LoginResponse {
-  user: User!
-  token: String!
+  user: User! # The authenticated user's information
+  token: String! # JWT token for subsequent authenticated requests
 }
 
+# Alternative response type for authentication
 type AuthPayload {
-  token: String!
-  user: User!
+  token: String! # JWT token for subsequent authenticated requests
+  user: User! # The authenticated user's information
 }
 
+# Response type for MFA setup
+type MFAQRCode {
+  qrCode: String! # QR code image data for MFA setup
+  secret: String! # Secret key for MFA verification
+}
+
+# Available mutations for user management and authentication
 type Mutation {
+  # Register a new user
   register(
-    firstName: String!
-    lastName: String!
-    email: String!
-    password: String!
+    firstName: String! # User's first name
+    lastName: String! # User's last name
+    email: String! # User's email address
+    password: String! # User's password
   ): User!
 
-  login(email: String!, password: String!): LoginResponse!
+  # Authenticate a user with email and password
+  login(
+    email: String! # User's email address
+    password: String! # User's password
+  ): LoginResponse!
 
-  unlockAccount(email: String!): Boolean!
+  # Unlock a user's account if it was locked
+  unlockAccount(
+    email: String! # Email address of the account to unlock
+  ): Boolean!
+
+  # Enable multi-factor authentication for the current user
+  enableMFA: MFAQRCode!
+
+  # Verify MFA setup with a token
+  verifyMFA(
+    token: String! # MFA verification token
+  ): Boolean!
+
+  # Disable multi-factor authentication for the current user
+  disableMFA: Boolean!
+
+  # Login with MFA enabled
+  loginWithMFA(
+    email: String! # User's email address
+    password: String! # User's password
+    token: String! # MFA verification token
+  ): LoginResponse!
 }

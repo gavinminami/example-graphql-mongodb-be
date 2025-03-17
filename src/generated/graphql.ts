@@ -17,22 +17,46 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token: Scalars['String']['output'];
+  user: User;
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   token: Scalars['String']['output'];
   user: User;
 };
 
+export type MfaqrCode = {
+  __typename?: 'MFAQRCode';
+  qrCode: Scalars['String']['output'];
+  secret: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  disableMFA: Scalars['Boolean']['output'];
+  enableMFA: MfaqrCode;
   login: LoginResponse;
+  loginWithMFA: LoginResponse;
   register: User;
+  unlockAccount: Scalars['Boolean']['output'];
+  verifyMFA: Scalars['Boolean']['output'];
 };
 
 
 export type MutationLoginArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+
+export type MutationLoginWithMfaArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 
@@ -43,8 +67,19 @@ export type MutationRegisterArgs = {
   password: Scalars['String']['input'];
 };
 
+
+export type MutationUnlockAccountArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationVerifyMfaArgs = {
+  token: Scalars['String']['input'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  me?: Maybe<User>;
   user?: Maybe<User>;
 };
 
@@ -66,6 +101,7 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
+  mfaEnabled: Scalars['Boolean']['output'];
 };
 
 
@@ -139,9 +175,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   LoginResponse: ResolverTypeWrapper<LoginResponse>;
+  MFAQRCode: ResolverTypeWrapper<MfaqrCode>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   RegisterInput: RegisterInput;
@@ -151,14 +189,22 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean']['output'];
   ID: Scalars['ID']['output'];
   LoginResponse: LoginResponse;
+  MFAQRCode: MfaqrCode;
   Mutation: {};
   Query: {};
   RegisterInput: RegisterInput;
   String: Scalars['String']['output'];
   User: User;
+};
+
+export type AuthPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type LoginResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LoginResponse'] = ResolversParentTypes['LoginResponse']> = {
@@ -167,12 +213,24 @@ export type LoginResponseResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MfaqrCodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MFAQRCode'] = ResolversParentTypes['MFAQRCode']> = {
+  qrCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  secret?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  disableMFA?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  enableMFA?: Resolver<ResolversTypes['MFAQRCode'], ParentType, ContextType>;
   login?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
+  loginWithMFA?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginWithMfaArgs, 'email' | 'password' | 'token'>>;
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
+  unlockAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnlockAccountArgs, 'email'>>;
+  verifyMFA?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyMfaArgs, 'token'>>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
@@ -181,11 +239,14 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mfaEnabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
+  AuthPayload?: AuthPayloadResolvers<ContextType>;
   LoginResponse?: LoginResponseResolvers<ContextType>;
+  MFAQRCode?: MfaqrCodeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
