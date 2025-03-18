@@ -28,7 +28,15 @@ export const mutation: MutationResolvers = {
       email,
       password,
     });
-    return user;
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+
+    return {
+      user,
+      token,
+    };
   },
   login: async (_, { email, password }, { userDAO }: Context) => {
     const user = await userDAO.login(email, password);

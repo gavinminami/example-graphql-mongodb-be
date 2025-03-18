@@ -47,7 +47,7 @@ type Mutation {
     lastName: String! # User's last name
     email: String! # User's email address
     password: String! # User's password
-  ): User!
+  ): LoginResponse!
 
   # Authenticate a user with email and password
   login(

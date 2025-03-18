@@ -41,7 +41,7 @@ export type Mutation = {
   enableMFA: MfaqrCode;
   login: LoginResponse;
   loginWithMFA: LoginResponse;
-  register: User;
+  register: LoginResponse;
   unlockAccount: Scalars['Boolean']['output'];
   verifyMFA: Scalars['Boolean']['output'];
 };
@@ -224,7 +224,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   enableMFA?: Resolver<ResolversTypes['MFAQRCode'], ParentType, ContextType>;
   login?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   loginWithMFA?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginWithMfaArgs, 'email' | 'password' | 'token'>>;
-  register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
+  register?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
   unlockAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUnlockAccountArgs, 'email'>>;
   verifyMFA?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyMfaArgs, 'token'>>;
 };
